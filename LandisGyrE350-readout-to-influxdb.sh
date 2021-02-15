@@ -9,6 +9,9 @@
 # To send output to InfluxDB on 127.0.0.1 call:
 # ./LandisGyrE350-readout-to-influxdb.sh /dev/udp/127.0.0.1/8089
 
+# Query for Grafana
+# SELECT DERIVATIVE(realpower_kWh, 1s)*1000*60*60 FROM (SELECT MAX("energy_kWh") AS energy_kWh FROM "powermeter" WHERE $timeFilter GROUP BY time($__interval));
+
 
 if [ $# -eq 1 ]; then
   exec > "$1"
