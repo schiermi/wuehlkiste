@@ -4,7 +4,7 @@
 # https://wiki.volkszaehler.org/hardware/controllers/ir-schreib-lesekopf-usb-ausgang
 # connected to /dev/ttyUSB0 (based on LandisGyrE350-readout.sh)
 #
-# Prints system time, L1…3 voltage- & energy reasding in InfluxDB UDP line protocol formatting.
+# Prints system time, L1…3 voltage- & energy readings in InfluxDB UDP line protocol formatting.
 #
 # To send output to InfluxDB on 127.0.0.1 call:
 # ./LandisGyrE350-readout-to-influxdb.sh /dev/udp/127.0.0.1/8089

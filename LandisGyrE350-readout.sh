@@ -6,7 +6,7 @@
 
 trap 'kill -s HUP 0' EXIT
 
-# The power meters IR interface always starts at to 300 aud
+# The power meters IR interface always starts at 300 baud
 stty -F /dev/ttyUSB0 300 evenp cs7 -opost igncr -isig -icanon -hupcl -echo -ixon -clocal
 
 while date -Is
