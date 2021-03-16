@@ -1,0 +1,39 @@
+Request PIN for mME - moderne Messeinrichtung - from operator (e.g. dispo-strom@mainova-servicedienste.de).
+Enter PIN into power meter, enable detailed report format (disabling PIN request might be necessary).
+https://www.dzg.de/fileadmin/dzg/content/downloads/produkte-zaehler/dvs74/DZG_DVS74_Handbuch_201005_01.pdf
+
+# 127.0.0.1:8089     : InfluxDB UDP protocol listener on "processing machine" itself
+# 192.168.127.23:2323: RPi with ser2net
+#   /etc/ser2net.conf: 2323:raw:0:/dev/ttyUSB0:9600 8DATABITS NONE 1STOPBIT
+# /etc/ser2net.conf connected to https://wiki.volkszaehler.org/hardware/controllers/ir-schreib-lesekopf-usb-ausgang
+
+# Make basic SML parser available on "processing" machine:
+sudo apt install libsml-dev
+gunzip -c < /usr/share/doc/libsml-dev/examples/sml_server.c.gz > sml.c
+wget https://raw.githubusercontent.com/volkszaehler/vzlogger/master/include/unit.h
+gcc -o bin/sml sml.c -lsml -lm
+
+# Transform sml output to InfluxDB UDP prototol
+while IFS='#' read key value unit; do
+  case "${key}" in '1-0:16.7.0*255')
+    printf "realpower_W value=%.1f %d\n" ${value/\./}e-1 $(date +%s)
+    ;;
+  esac
+done < <(sml - < /dev/tcp/192.168.127.23/2323)
+
+sml example output:
+    SML file (3 SML messages, 260 bytes)
+    SML message  101
+    SML message  701
+    SML message  201
+    OBIS data
+    1-0:96.50.1*1#DZG#
+    1-0:96.1.0*255#… #
+    1-0:1.8.0*255#301411.2#Wh
+    1-0:1.8.1*255#234214.6#Wh
+    1-0:1.8.2*255#67196.6#Wh
+    1-0:16.7.0*255#231.8#W
+
+InfluxDB UDP example:
+    realpower_W value=232.0 1615852906
+    realpower_W value=232.4 161585290
