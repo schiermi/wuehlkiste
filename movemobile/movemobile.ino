@@ -160,7 +160,7 @@ void loop()
       config.turnover_wait = 100;
     }
     if (config.turnover_wait > 5000) {
-      config.turnover_wait = 10000;
+      config.turnover_wait = 50000;
     }
   }
 
